@@ -3,7 +3,12 @@ package com.example.qeohelloworld;
 import android.os.Bundle;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.IntentFilter;
+import android.util.Log;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -33,6 +38,7 @@ public class MainActivity extends Activity {
 	private ScrollView mScrollViewTextChat;
 	private boolean mQeoClosed = false;
 	private PlayerEventHandler mEventHandler = null;
+	private PlugInControlReceiver mPlugInControlReceiver = null;
 	    
 	/**
      * This class that extends DefaultEventReaderListener to be able to override the method onData. The method OnData is
@@ -45,20 +51,39 @@ public class MainActivity extends Activity {
         @Override
         public void onData(final ChatMessage data)
         {
-            if(data.message.equals("Disconnect")) {
-                mEventHandler.OnDisconnect();
-                System.out.println("onDisconnect called");
-            } else if (data.message.equals("Connect")) {
-                mEventHandler.OnConnect();
-                System.out.println("OnConnect called");
-            }
-            
             mTextView.append(data.from + "@says: " + data.message + "\n");
 
             // This line scroll the view to see the last message sent 
             mScrollViewTextChat.smoothScrollTo(0, mTextView.getBottom());
         }
     }
+    
+    /**
+     * This class handles the events fired when a device is connected or disconnected from power source.
+     */
+    private class PlugInControlReceiver extends BroadcastReceiver {
+
+        @Override
+        public void onReceive(Context context, Intent intent) {
+            String action = intent.getAction();
+
+            if(action.equals(Intent.ACTION_POWER_CONNECTED)) {
+                Toast
+                .makeText(context, "Connected!", Toast.LENGTH_LONG)
+                .show();
+                Log.d("PluginControl", "Connected!");
+                mEventHandler.OnConnect();
+            }
+            else if(action.equals(Intent.ACTION_POWER_DISCONNECTED)) {
+                Toast
+                .makeText(context, "Disconnected!", Toast.LENGTH_LONG)
+                .show();
+                Log.d("PluginControl", "Disconnected!");
+                mEventHandler.OnDisconnect();
+            }
+        }
+    }
+
     
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -71,6 +96,25 @@ public class MainActivity extends Activity {
         mTextView = (TextView) findViewById(R.id.textView);
         initButton(button);
         initQeo();
+    }
+    
+    @Override
+    protected void onResume() {
+        super.onResume();
+        if (mPlugInControlReceiver == null) {
+            mPlugInControlReceiver = new PlugInControlReceiver();
+        }
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_POWER_CONNECTED);
+        intentFilter.addAction(Intent.ACTION_POWER_DISCONNECTED);
+        registerReceiver(mPlugInControlReceiver, intentFilter);
+    }
+    
+    @Override
+    protected void onPause() {
+        super.onPause();
+        if (mPlugInControlReceiver != null) {
+            unregisterReceiver(mPlugInControlReceiver);
+        }
     }
 
     private void initQeo()
