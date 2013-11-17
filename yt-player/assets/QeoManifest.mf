@@ -1,0 +1,9 @@
+[meta]
+# application name
+appname = qeohelloworld
+# manifest file format version
+version = 1
+
+[application]
+com::example::qeohelloworld::ChatMessage=rw
+#org::qeo::sample::simplechat::ChatMessage=rw
