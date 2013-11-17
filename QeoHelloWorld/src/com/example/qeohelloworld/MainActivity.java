@@ -32,6 +32,7 @@ public class MainActivity extends Activity {
 	private TextView mTextView;
 	private ScrollView mScrollViewTextChat;
 	private boolean mQeoClosed = false;
+	private PlayerEventHandler mEventHandler = null;
 	    
 	/**
      * This class that extends DefaultEventReaderListener to be able to override the method onData. The method OnData is
@@ -44,6 +45,14 @@ public class MainActivity extends Activity {
         @Override
         public void onData(final ChatMessage data)
         {
+            if(data.message.equals("Disconnect")) {
+                mEventHandler.OnDisconnect();
+                System.out.println("onDisconnect called");
+            } else if (data.message.equals("Connect")) {
+                mEventHandler.OnConnect();
+                System.out.println("OnConnect called");
+            }
+            
             mTextView.append(data.from + "@says: " + data.message + "\n");
 
             // This line scroll the view to see the last message sent 
@@ -78,6 +87,8 @@ public class MainActivity extends Activity {
                     // Create the Qeo writer and reader 
                     mReader = mQeo.createEventReader(ChatMessage.class, new MyListener());
                     mWriter = mQeo.createEventWriter(ChatMessage.class);
+                    mEventHandler = new PlayerEventHandler("Disconnected", "Connected", "Play", mQeo);
+                    mEventHandler.Init();
                 }
                 catch (final QeoException e) {
                 }
