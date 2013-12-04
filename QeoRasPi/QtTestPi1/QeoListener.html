@@ -1,0 +1,92 @@
+<html>
+<head>
+<script src="jquery.js"></script> <!--  needed for this sample, not for qeo itself -->
+<script type="text/javascript">
+
+window.onImageUrl = function(from, imageUrl) {
+    alert('Imageurl: ' + imageUrl);
+}
+
+window.onUserEntered = function(userId, userImage) {
+    alert('User enter: ' + userId + ', Image: ' + userImage);
+}
+
+window.onUserExited = function(userId) {
+    alert('User exited: ' + userId);
+}
+
+window.onQeoMsgReceived = function(from, message) {
+    $('#output').append('<div class="message"><span class="username">' + from + '</span><span class="messagetext">Qeo msg recvd: ' + message + '</span></div>');
+    $('#output').scrollTop($('#output').get(0).scrollHeight);
+    var jsonObj = jQuery.parseJSON(message);
+    if (jsonObj != null && jsonObj != undefined) {
+        if (jsonObj.type) {
+            if (jsonObj.type == "imageSend") {
+                if (jsonObj.imageUrl) {
+                    if (window.onImageUrl) {
+                        window.onImageUrl(from, jsonObj.imageUrl);
+                    }
+                }
+            }
+            else if (jsonObj.type == "userEnter") {
+                if (jsonObj.userId) {
+                    var userImage = jsonObj.userImage ? jsonObj.userImage : "";
+                    if (window.onUserEntered) {
+                        window.onUserEntered(jsonObj.userId, jsonObj.userImage);
+		    }
+                }
+            }
+            else if (jsonObj.type == "userExit") {
+                if (jsonObj.userId) {
+                    if (window.onUserExited) { 
+                        window.onUserExited(jsonObj.userId);
+                    }
+                }
+            }
+        }     
+    }
+}
+
+$(document).ready(function() {
+    $('#output').scrollTop($('#output').get(0).scrollHeight);
+});
+
+</script>
+
+<style>
+    .username {
+        color: blue;
+        font-weight: bold;
+    }
+    .messagetext {
+        color: black;
+    }
+    .message {
+        border: solid 1px black;
+    }
+    span {
+        display: inline-block;
+        *display: inline;/* for IE7*/
+        *zoom:1;/* for IE7*/
+        width: auto !important;
+        width 150px;
+        min-width: 150px;
+    }
+</style>
+</head>
+
+<body>
+<div id="input" style="clear:both;">
+    User <input id="who" type="text" value="WebViewUser"/>
+    Message <input id="text" type="text" style="width:80%;"/>
+    <button id="send">Send</button>
+</div>
+<hr/>
+<div id="output" style="border:solid black; padding: 10px; overflow-y:auto; margin:0px; margin-bottom: 5px; height: 60%;">
+    <div class="message">
+        <span class="username">FROM</span><span class="messagetext">MESSAGE</span>
+    </div>
+</div>
+</body>
+</html>
+
