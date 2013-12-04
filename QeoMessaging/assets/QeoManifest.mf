@@ -1,0 +1,8 @@
+[meta]
+# application name
+appname = qeomessaging
+# manifest file format version
+version = 1
+
+[application]
+org::qeo::qeomessaging::ChatMessage=rw
