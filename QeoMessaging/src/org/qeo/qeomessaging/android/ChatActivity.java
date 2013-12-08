@@ -107,8 +107,7 @@ public class ChatActivity
         mQeoHelper.connect(getApplicationContext());
 
         
-        System.out.println(sendUserId());
-        System.out.println(getSSID());
+        
     }
     
   
@@ -118,6 +117,7 @@ public class ChatActivity
     {
         super.onStart();
         mQeoHelper.connect(getApplicationContext());
+        
     }
 
     // IQeoMessagingListener
@@ -138,6 +138,9 @@ public class ChatActivity
 				        }
 				    });
 		} else {
+			System.out.println(sendUserId());
+	        System.out.println(getSSID());
+	        
 	        mSendImageButton.setEnabled(true);
 	        mUserEnterButton.setEnabled(true);
 	        mUserExitButton.setEnabled(true);
@@ -258,6 +261,8 @@ public class ChatActivity
     	builder.show();	
  }
     
+    
+    
     public String sendUserId() {
 
   		AccountManager manager = AccountManager.get(this);
@@ -276,7 +281,7 @@ public class ChatActivity
   			String[] parts = email.split("@");
   			if (parts.length > 0 && parts[0] != null)
   			{
-  				this.mQeoHelper.sendUserEnter(parts[0]);
+  				mQeoHelper.sendUserEnter(parts[0]);
   				return parts[0];
   			}
   			else

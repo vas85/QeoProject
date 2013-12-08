@@ -64,7 +64,7 @@ public class QeoMessagingHelper {
 	
 	public void sendUserEnter(String googleAccount)
 	{
-		sendMessage("{\"type\": \"userEnter\", \"userId\": \"" + googleAccount + "\", \"userImage\": \"http://foo.jpg\"}");
+		sendMessage("{\"type\": \"userEnter\", \"userId\": \"" + googleAccount + "\", \"userImage\": \" http://robohash.org/" + googleAccount +".png" + "\"}");
 	}
 	
 	public void sendUserExit(String googleAccount)
