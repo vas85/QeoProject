@@ -62,6 +62,15 @@ public class QeoMessagingHelper {
 		
 	}
 	
+	public void sendUserEnter(String googleAccount)
+	{
+		sendMessage("{\"type\": \"userEnter\", \"userId\": \"" + googleAccount + "\", \"userImage\": \"http://foo.jpg\"}");
+	}
+	
+	public void sendUserExit(String googleAccount)
+	{
+		sendMessage("{\"type\": \"userEnter\", \"userId\": \"" + googleAccount + "\", \"userImage\": \"http://foo.jpg\"}");
+	}
 	
 	
 	

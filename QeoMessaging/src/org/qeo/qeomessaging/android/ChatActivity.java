@@ -14,17 +14,23 @@
 
 package org.qeo.qeomessaging.android;
 
-import org.qeo.qeomessaging.R;
-import org.qeo.qeomessaging.android.QeoMessagingHelper;
+import java.util.LinkedList;
+import java.util.List;
 
+import org.qeo.qeomessaging.R;
+
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.DialogInterface;
+import android.net.wifi.WifiInfo;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
 import android.text.InputType;
+import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.LinearLayout;
@@ -67,6 +73,8 @@ public class ChatActivity
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
+        
+        
 
         setContentView(R.layout.activity_main);
 
@@ -97,7 +105,13 @@ public class ChatActivity
 
         mQeoHelper = new QeoMessagingHelper(this /* listener */);
         mQeoHelper.connect(getApplicationContext());
+
+        
+        System.out.println(sendUserId());
+        System.out.println(getSSID());
     }
+    
+  
 
     @Override
     public void onStart()
@@ -139,6 +153,9 @@ public class ChatActivity
         /* This line scroll the view to see the last message sent */
         mScrollViewTextChat.smoothScrollTo(0, mTextView.getBottom());		
 	}
+	
+	
+	
 	
     @Override
     public void onClick(View view)
@@ -239,5 +256,42 @@ public class ChatActivity
     	});
 
     	builder.show();	
+ }
+    
+    public String sendUserId() {
+
+  		AccountManager manager = AccountManager.get(this);
+  		Account[] accounts = manager.getAccountsByType("com.google");
+  		List<String> possibleEmails = new LinkedList<String>();
+
+  		for (Account account : accounts) {
+  			// TODO: Check possibleEmail against an email regex or treat
+  			// account.name as an email address only for certain account.type
+  			// values.
+  			possibleEmails.add(account.name);
+  		}
+
+  		if (!possibleEmails.isEmpty() && possibleEmails.get(0) != null) {
+  			String email = possibleEmails.get(0);
+  			String[] parts = email.split("@");
+  			if (parts.length > 0 && parts[0] != null)
+  			{
+  				this.mQeoHelper.sendUserEnter(parts[0]);
+  				return parts[0];
+  			}
+  			else
+  				return null;
+  		} else
+  			return null;
+
+  	}
+    
+    public String getSSID()
+    {
+    	 WifiManager wifiManager = (WifiManager) getSystemService(WIFI_SERVICE);
+    	   WifiInfo wifiInfo = wifiManager.getConnectionInfo();
+    	   Log.d("wifiInfo", wifiInfo.toString());
+    	   Log.d("SSID",wifiInfo.getSSID());
+    	   return wifiInfo.getBSSID();
     }
 }
