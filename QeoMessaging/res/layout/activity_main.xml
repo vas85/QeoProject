@@ -6,29 +6,41 @@
     android:orientation="vertical"
     tools:context=".MainActivity" >
 
-    <Button
-        android:id="@+id/sendImage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send Image URL" />
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:orientation="horizontal"
+        android:layout_height="wrap_content" >
+
+	    <Button
+	        android:id="@+id/sendImage"
+	        android:layout_width="80dp"
+	        android:layout_height="81dp"
+	        android:text="Send Images" />
+	    
+	    <Button
+	        android:id="@+id/sendUserEnter"
+	        android:layout_width="80dp"
+	        android:layout_height="wrap_content"
+	        android:text="Send User Enter" />
+	    
+	    <Button
+	        android:id="@+id/sendUserExit"
+	        android:layout_width="80dp"
+	        android:layout_height="wrap_content"
+	        android:text="Send User Exit" />
+	    
+	    <Button
+	        android:id="@+id/sendTemperature"
+	        android:layout_width="80dp"
+	        android:layout_height="wrap_content"
+	        android:text="Send Temperature" />
+	        
+    </LinearLayout>
     
-    <Button
-        android:id="@+id/sendUserEnter"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send User Enter" />
-    
-    <Button
-        android:id="@+id/sendUserExit"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send User Exit" />
-    
-    <Button
-        android:id="@+id/sendTemperature"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Send Temperature" />
+    <org.qeo.qeomessaging.android.CameraPreview
+        android:id="@+id/cameraView"
+	        android:layout_width="fill_parent"
+  			android:layout_height="300dp" />
     
     <ScrollView
         android:id="@+id/scrollChatbox"
@@ -68,5 +80,4 @@
             android:layout_height="wrap_content"
             android:text="@string/buttonSend" />
     </LinearLayout>
-
 </LinearLayout>

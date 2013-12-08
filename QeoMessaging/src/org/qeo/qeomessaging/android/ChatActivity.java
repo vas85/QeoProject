@@ -24,8 +24,10 @@ import android.os.Bundle;
 import android.text.InputType;
 import android.view.View;
 import android.view.View.OnClickListener;
+import android.view.ViewGroup.LayoutParams;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.TextView;
 
@@ -39,6 +41,7 @@ public class ChatActivity
     implements OnClickListener, QeoMessagingHelper.IQeoMessagingListener
 {
 
+	private LinearLayout mTopLayout;
     private Button mSendImageButton;
     private Button mUserEnterButton;
     private Button mUserExitButton;
@@ -47,6 +50,7 @@ public class ChatActivity
     private EditText mEditText;
     private TextView mTextView;
     private ScrollView mScrollViewTextChat;
+    private CameraPreview mPreview;
 
     private String mLastSendImageText;
     private String mLastUserId;
@@ -62,6 +66,7 @@ public class ChatActivity
         setContentView(R.layout.activity_main);
 
         /* Associate the local variables with the right view */
+        mTopLayout = (LinearLayout)findViewById(R.id.LinearLayout1);
         mSendImageButton = (Button)findViewById(R.id.sendImage);
         mUserEnterButton = (Button)findViewById(R.id.sendUserEnter);
         mUserExitButton = (Button)findViewById(R.id.sendUserExit);
@@ -82,6 +87,8 @@ public class ChatActivity
         mTemperatureButton.setEnabled(false);
         mSendButton.setOnClickListener(this);
         mSendButton.setEnabled(false);
+        
+        mPreview = (CameraPreview)findViewById(R.id.cameraView);//new CameraPreview(this);
 
         mQeoHelper = new QeoMessagingHelper(this /* listener */);
         mQeoHelper.connect(getApplicationContext());
@@ -140,6 +147,9 @@ public class ChatActivity
 
             case R.id.sendImage:
             {
+            	ImageUploader uploader = new ImageUploader();
+                uploader.startCapturing(mPreview); 
+                /*
             	ShowDialog("Enter Image URL", mLastSendImageText, new DialogInterface.OnClickListener() { 
             	    @Override
             	    public void onClick(DialogInterface dialog, int which) {
@@ -148,7 +158,8 @@ public class ChatActivity
             	    		ChatActivity.this.mLastSendImageText = input.getText().toString();
             	    		ChatActivity.this.mQeoHelper.sendMessage("{\"type\": \"imageSend\", \"imageUrl\": \"" + mLastSendImageText + "\"}");
             	    	}
-            	    }});            
+            	    }});
+            	    */            
             }
             break;
             	
