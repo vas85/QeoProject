@@ -69,7 +69,7 @@ public class QeoMessagingHelper {
 	
 	public void sendUserExit(String googleAccount)
 	{
-		sendMessage("{\"type\": \"userEnter\", \"userId\": \"" + googleAccount + "\", \"userImage\":  \" http://robohash.org/" + googleAccount +".png" + "\"}");
+		sendMessage("{\"type\": \"userExit\", \"userId\": \"" + googleAccount + "\", \"userImage\":  \" http://robohash.org/" + googleAccount +".png" + "\"}");
 	}
 	
 	
