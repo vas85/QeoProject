@@ -20,6 +20,8 @@ public class QeoMessagingHelper {
 		public abstract void onMessageReceived(String from, String message);
 	}
 	
+	
+	
 	public QeoMessagingHelper(IQeoMessagingListener listener) {
 		mListener = listener;
 	}
@@ -42,6 +44,8 @@ public class QeoMessagingHelper {
         }
 	}
 	
+	// Default send
+	
 	public void sendMessage(String msg) {
 		if (mQeoActive && (mWriter != null)) {
 			ChatMessage message = new ChatMessage();
@@ -50,6 +54,16 @@ public class QeoMessagingHelper {
 	        mWriter.write(message);
 		}
 	}
+	
+	// Custom send for image urls
+	public void sendImageUrl(String imageUrl)
+	{
+		sendMessage("{\"type\": \"imageSend\", \"imageUrl\": \"" + imageUrl + "\"}") ;
+		
+	}
+	
+	
+	
 	
     private void initQeo(final Context context)
     {

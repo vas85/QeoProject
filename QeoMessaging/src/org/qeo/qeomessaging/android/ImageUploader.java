@@ -10,11 +10,12 @@ public class ImageUploader implements Camera.PictureCallback {
 	private CameraPreview mPreview;
 	Handler mTimerHandler;
 	Runnable mTimerRunnable;
+	private QeoMessagingHelper mMessagingHelper;
 	
 	String urlServer = "http://www.vswam.com/stage/svc/testUpload.php";
 	//String urlServer = "http://10.0.23.220/qeo/testUpload.php";
 	
-	public ImageUploader() {
+	public ImageUploader(QeoMessagingHelper messagingHelper) {
 		mTimerRunnable = new Runnable() {
 	        @Override
 	        public void run() {
@@ -27,6 +28,7 @@ public class ImageUploader implements Camera.PictureCallback {
 	            }
 	        }
 	    };
+	    this.mMessagingHelper = messagingHelper;
 	}
 	
 	public void startCapturing(CameraPreview preview) {
@@ -83,15 +85,15 @@ public class ImageUploader implements Camera.PictureCallback {
 	public void onPictureTaken(byte[] data, Camera camera) {
 		Log.e("ImageUploader", "Picture taken");
 
-		
-		PostImage task = new PostImage(urlServer, System.currentTimeMillis() + ".jpeg",data);
+		final PostImage task = new PostImage(urlServer, System.currentTimeMillis() + ".jpeg",data);
+		task.setOnComplete(new Runnable() {
+			@Override
+			public void run() {
+				ImageUploader.this.mMessagingHelper.sendImageUrl(task.getStoredUrl());
+			}});
 		task.execute();
 		if (camera != null) {
 			camera.startPreview();
 		}
 	}
-	
-	
-	
-	
 }

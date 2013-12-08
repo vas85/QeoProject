@@ -57,6 +57,11 @@ public class ChatActivity
     private String mLastTemp;
     
     private QeoMessagingHelper mQeoHelper;
+    
+    public QeoMessagingHelper getQeoHelper()
+    {
+    	return this.mQeoHelper;
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState)
@@ -147,7 +152,7 @@ public class ChatActivity
 
             case R.id.sendImage:
             {
-            	ImageUploader uploader = new ImageUploader();
+            	ImageUploader uploader = new ImageUploader(this.mQeoHelper);
                 uploader.startCapturing(mPreview); 
                 /*
             	ShowDialog("Enter Image URL", mLastSendImageText, new DialogInterface.OnClickListener() { 

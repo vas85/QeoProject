@@ -10,9 +10,10 @@ import java.net.MalformedURLException;
 import java.net.URL;
 
 import android.os.AsyncTask;
+import android.os.Handler;
 import android.util.Log;
 
-class PostImage extends AsyncTask<Void, Void, Void>    {
+class PostImage extends AsyncTask<Void, Void, String>    {
 	
 	
 
@@ -20,16 +21,28 @@ class PostImage extends AsyncTask<Void, Void, Void>    {
 		private String filename;
 		private String URL;
 		private byte[] imageBytes;
+		private Runnable mOnComplete;
+		private String mStoredUrl;
+		
 		PostImage(String URL,String filename,byte[] imageData)    {
         	//this.imageBytes = bytes;
 			this.URL = URL;
         	this.filename = filename;
         	this.imageBytes = imageData;
         }
+		
+		public void setOnComplete(Runnable onComplete) {
+			this.mOnComplete = onComplete;
+		}
+		
+		public String getStoredUrl() {
+			return mStoredUrl;
+		}
  
         @Override
-        protected void onPostExecute(Void result) {
-            super.onPostExecute(result);
+        protected void onPostExecute(String result) {
+        	super.onPostExecute(result);
+        	new Handler().post(this.mOnComplete);
         }
  
         @Override
@@ -38,9 +51,9 @@ class PostImage extends AsyncTask<Void, Void, Void>    {
         }
  
         @Override
-        protected Void doInBackground(Void... arg0) { 
+        protected String doInBackground(Void... arg0) { 
             try {
-				upload(this.filename, this.imageBytes);
+				return upload(this.filename, this.imageBytes);
 			} catch (IOException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -48,7 +61,7 @@ class PostImage extends AsyncTask<Void, Void, Void>    {
             return null;
         }   
         
-        private void upload(String filename,byte[] imageBytes) throws IOException {
+        private  String upload(String filename,byte[] imageBytes) throws IOException {
         	URL url = new URL(this.URL);
     		HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         
@@ -125,7 +138,11 @@ class PostImage extends AsyncTask<Void, Void, Void>    {
     				}
 
     				connection.disconnect();
-    				System.out.println( sb.toString());
+    				System.out.println(sb.toString());
+    				this.mStoredUrl = sb.toString();
+    				return this.mStoredUrl;
+    			
+
     			}
     			
     		}
@@ -133,5 +150,6 @@ class PostImage extends AsyncTask<Void, Void, Void>    {
     		{
     			Log.e("ERROR!", ex.toString());
     		}
+    		return null;
         }
 }
