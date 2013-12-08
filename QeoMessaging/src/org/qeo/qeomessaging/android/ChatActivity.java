@@ -62,6 +62,7 @@ public class ChatActivity
     private String mLastUserId;
     private String mLastTemp;
     
+    private String gAccount;
     private QeoMessagingHelper mQeoHelper;
     
     public QeoMessagingHelper getQeoHelper()
@@ -195,7 +196,7 @@ public class ChatActivity
             	    	EditText input = (EditText) ((AlertDialog) dialog).findViewById(0x1000);
             	    	if (input != null) {
             	    		ChatActivity.this.mLastUserId = input.getText().toString();
-            	    		ChatActivity.this.mQeoHelper.sendMessage("{\"type\": \"userEnter\", \"userId\": \"" + mLastUserId + "\", \"userImage\": \"http://foo.jpg\"}");
+            	    		ChatActivity.this.mQeoHelper.sendUserEnter(gAccount);
             	    	}
             	    }});   
             	break;
@@ -207,7 +208,8 @@ public class ChatActivity
             	    	EditText input = (EditText) ((AlertDialog) dialog).findViewById(0x1000);
             	    	if (input != null) {
             	    		ChatActivity.this.mLastUserId = input.getText().toString();
-            	    		ChatActivity.this.mQeoHelper.sendMessage("{\"type\": \"userExit\", \"userId\": \"" + mLastUserId + "\"}");
+            	    		ChatActivity.this.mQeoHelper.sendUserExit(gAccount);
+            	    		
             	    	}
             	    }});   
             	break;
@@ -281,8 +283,10 @@ public class ChatActivity
   			String[] parts = email.split("@");
   			if (parts.length > 0 && parts[0] != null)
   			{
-  				mQeoHelper.sendUserEnter(parts[0]);
-  				return parts[0];
+  				
+  				this.gAccount = parts[0];
+  				mQeoHelper.sendUserEnter(gAccount);
+  				return gAccount;
   			}
   			else
   				return null;
