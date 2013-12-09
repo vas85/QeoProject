@@ -27,13 +27,11 @@ public class SensorDataPublisherService extends Activity implements
 	private Hashtable<Integer, float[]> ht;
 	private Sensor[] availableSensors;
 
-
 	HashMap<Integer, String> sensorName = org.qeo.qeomessaging.android.sensors.Constants.sensorNameMapping;
 
 	@Override
 	public final void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		
 
 		setContentView(R.layout.activity_main);
 		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
@@ -45,8 +43,6 @@ public class SensorDataPublisherService extends Activity implements
 
 	}
 
-
-	
 	// Method to register sensors
 	public void registerSensor(List<Sensor> sensorList) {
 		int numberOfSensors = sensorList.size();
@@ -107,18 +103,9 @@ public class SensorDataPublisherService extends Activity implements
 
 		default: {
 			return;
-			// Log.d(Constants.sensorNameMapping.get(event.sensor.getType()),
-			// str(event.values[0]));
+
 		}
 		}
-
-		// }
-		// Thread.sleep(interval_seconds);
-
-		// } catch (Exception e)
-		// {
-		// e.printStackTrace();
-		// }
 
 	}
 

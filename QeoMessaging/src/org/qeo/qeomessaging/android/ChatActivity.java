@@ -14,6 +14,8 @@
 
 package org.qeo.qeomessaging.android;
 
+import java.util.HashMap;
+import java.util.Hashtable;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -23,7 +25,12 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.AlertDialog;
+import android.content.Context;
 import android.content.DialogInterface;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.net.wifi.WifiInfo;
 import android.net.wifi.WifiManager;
 import android.os.Bundle;
@@ -43,7 +50,7 @@ import android.widget.TextView;
  * 
  */
 public class ChatActivity extends Activity implements OnClickListener,
-		QeoMessagingHelper.IQeoMessagingListener {
+		QeoMessagingHelper.IQeoMessagingListener, SensorEventListener {
 
 	private LinearLayout mTopLayout;
 	private Button mSendImageButton;
@@ -62,6 +69,15 @@ public class ChatActivity extends Activity implements OnClickListener,
 
 	private String gAccount;
 	private QeoMessagingHelper mQeoHelper;
+
+	// Variables for sensor stuff
+	private final int interval_seconds = 1 * 1000;
+	private SensorManager mSensorManager;
+	private List<Sensor> mSensorList;
+	private Hashtable<Integer, float[]> ht;
+	private Sensor[] availableSensors;
+
+	HashMap<Integer, String> sensorName = org.qeo.qeomessaging.android.sensors.Constants.sensorNameMapping;
 
 	public QeoMessagingHelper getQeoHelper() {
 		return this.mQeoHelper;
@@ -102,6 +118,13 @@ public class ChatActivity extends Activity implements OnClickListener,
 		mQeoHelper = new QeoMessagingHelper(this /* listener */);
 		mQeoHelper.connect(getApplicationContext());
 
+		mSensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+		mSensorList = mSensorManager.getSensorList(Sensor.TYPE_ALL);
+
+		ht = new Hashtable<Integer, float[]>();
+
+		registerSensor(mSensorList);
+
 	}
 
 	@Override
@@ -129,7 +152,7 @@ public class ChatActivity extends Activity implements OnClickListener,
 						}
 					});
 		} else {
-			
+
 			this.gAccount = getUserId();
 			mQeoHelper.sendUserEnter(this.gAccount);
 
@@ -139,6 +162,19 @@ public class ChatActivity extends Activity implements OnClickListener,
 			mTemperatureButton.setEnabled(true);
 			mSendButton.setEnabled(true);
 		}
+	}
+
+	protected void onResume() {
+		super.onResume();
+		for (int i = 0; i < mSensorList.size(); i++) {
+			mSensorManager.registerListener(this, availableSensors[i],
+					SensorManager.SENSOR_DELAY_NORMAL);
+		}
+	}
+
+	protected void onPause() {
+		super.onPause();
+		mSensorManager.unregisterListener(this);
 	}
 
 	@Override
@@ -281,4 +317,61 @@ public class ChatActivity extends Activity implements OnClickListener,
 		Log.d("SSID", wifiInfo.getSSID());
 		return wifiInfo.getBSSID();
 	}
+
+	// Method to register sensors
+	public void registerSensor(List<Sensor> sensorList) {
+		int numberOfSensors = sensorList.size();
+		Log.d("Number of Sensors", numberOfSensors + "");
+
+		availableSensors = new Sensor[numberOfSensors];
+
+		for (int i = 0; i < numberOfSensors; i++) {
+			availableSensors[i] = mSensorManager.getDefaultSensor(sensorList
+					.get(i).getType());
+		}
+	}
+
+	@Override
+	public void onAccuracyChanged(Sensor sensor, int accuracy) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public void onSensorChanged(SensorEvent event) {
+		switch (event.sensor.getType()) {
+		case Sensor.TYPE_PRESSURE: {
+			Log.d("Pressure", String.valueOf(event.values[0]) + "Pa");
+			mQeoHelper.sendPressure(event.values[0]);
+			return;
+
+		}
+		case Sensor.TYPE_AMBIENT_TEMPERATURE: {
+
+			Log.d("Temperature", String.valueOf(event.values[0]));
+			mQeoHelper.sendTemperature(event.values[0]);
+			return;
+		}
+
+		case Sensor.TYPE_LIGHT: {
+			Log.d("Light", String.valueOf(event.values[0]) + "lux");
+			mQeoHelper.sendLight(event.values[0]);
+			return;
+		}
+
+		case Sensor.TYPE_RELATIVE_HUMIDITY: {
+			Log.d("Relative Humidity", String.valueOf(event.values[0]) + "%");
+			mQeoHelper.sendHumidity(event.values[0]);
+			return;
+
+		}
+
+		default: {
+			return;
+
+		}
+		}
+
+	}
+
 }

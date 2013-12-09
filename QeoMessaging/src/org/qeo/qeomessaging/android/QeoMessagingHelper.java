@@ -19,11 +19,13 @@ public class QeoMessagingHelper {
 		public abstract void onConnected(boolean success);
 		public abstract void onMessageReceived(String from, String message);
 	}
-	
+	 float prevTemp,prevPres,prevHum,prevLight;
 	
 	
 	public QeoMessagingHelper(IQeoMessagingListener listener) {
 		mListener = listener;
+		
+		prevTemp = prevPres = prevHum = prevLight = 0;
 	}
 	
 	public void connect(Context context) {
@@ -71,6 +73,36 @@ public class QeoMessagingHelper {
 	{
 		sendMessage("{\"type\": \"userExit\", \"userId\": \"" + googleAccount + "\", \"userImage\":  \" http://robohash.org/" + googleAccount +".png" + "\"}");
 	}
+	
+	public void sendPressure(float pressure)
+	{
+		
+		if(Math.abs(prevPres - pressure) > 2)
+		sendMessage("{\"type\": \"pressure\", \"value\":  " + pressure + "}");
+		prevPres = pressure;
+	}
+	
+	public void sendTemperature(float temperature)
+	{
+		if(Math.abs(prevTemp - temperature) > 1)
+		sendMessage("{\"type\": \"temperature\", \"value\":  " + temperature + "}");
+		prevTemp = temperature;
+	}
+	
+	public void sendLight(float light)
+	{
+		if(Math.abs(prevLight - light) > 20)
+		sendMessage("{\"type\": \"light\", \"value\":  " + light + "}");
+		prevLight = light;
+	}
+	
+	public void sendHumidity(float humidity)
+	{
+		if(Math.abs(prevHum - humidity) > 1)
+		sendMessage("{\"type\": \"light\", \"value\":  " + humidity + "}");
+		prevHum = humidity;
+	}
+	
 	
 	
 	
